@@ -1,0 +1,25 @@
+id: "2026-11-21-01"
+source_file: "data/raw/source_clip_01.mp4"
+source_url: "https://youtube.com/watch?v=example123"
+creator_name: "ViceCityExplorer"
+creator_channel_url: "https://youtube.com/@ViceCityExplorer"
+start_time: 14.5
+end_time: 42.0
+series: "new_find"
+hook_text: "SECRET SUBMARINE IN LEONIDA?"
+context_line: "Found off the coast of Vice Beach"
+labels:
+  - "Point of Interest"
+  - "Underwater Cave"
+closing_line: "Have you explored this spot yet?"
+claim_text: "Underground submarine bunker accessible through Vice Beach underwater cave"
+evidence_link: "https://support.rockstargames.com/articles/patch-1-01"
+cutscene_seconds: 0.0
+sensitivity: "Green"
+licensed_music_present: false
+platforms:
+  - "youtube_shorts"
+  - "tiktok"
+  - "instagram_reels"
+  - "snapchat_spotlight"
+dm_sent_date: null

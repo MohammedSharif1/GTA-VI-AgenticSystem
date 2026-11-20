@@ -1,0 +1,28 @@
+# Series format templates and target timing hypotheses
+
+new_find:
+  structure:
+    - hook (2-3s)
+    - context (3-5s)
+    - the_find (10-18s)
+    - why_it_matters (4-6s)
+    - closing_line (2-3s)
+  target_duration_seconds: [20, 35]
+
+fast_guide:
+  structure:
+    - hook (2-3s)
+    - problem (3-5s)
+    - steps (12-22s)
+    - result (3-5s)
+    - closing_line (2-3s)
+  target_duration_seconds: [25, 40]
+
+what_changed:
+  structure:
+    - hook (2-3s)
+    - before (4-6s)
+    - after (8-14s)
+    - impact (4-6s)
+    - closing_line (2-3s)
+  target_duration_seconds: [20, 35]

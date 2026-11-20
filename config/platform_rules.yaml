@@ -1,0 +1,47 @@
+# Platform specifications & limits for The Find Feed
+# Last verified: 2026-11-20
+
+youtube_shorts:
+  max_duration_seconds: 60
+  aspect_ratio: "9:16"
+  resolution: [1080, 1920]
+  safe_zones:
+    top_margin_pct: 12
+    bottom_margin_pct: 18
+  support_arabic_subtitle_track: true
+  credit_method: "on_screen_and_caption"
+  source_doc: "https://support.google.com/youtube/answer/10059070"
+
+tiktok:
+  max_duration_seconds: 60
+  aspect_ratio: "9:16"
+  resolution: [1080, 1920]
+  safe_zones:
+    top_margin_pct: 15
+    bottom_margin_pct: 20
+    right_margin_pct: 15
+  credit_method: "caption_and_pinned_comment"
+  separate_arabic_channel: true
+  source_doc: "https://support.tiktok.com"
+
+instagram_reels:
+  max_duration_seconds: 90
+  aspect_ratio: "9:16"
+  resolution: [1080, 1920]
+  safe_zones:
+    top_margin_pct: 15
+    bottom_margin_pct: 22
+  credit_method: "on_screen_and_caption"
+  separate_arabic_channel: true
+  source_doc: "https://help.instagram.com"
+
+snapchat_spotlight:
+  max_duration_seconds: 60
+  aspect_ratio: "9:16"
+  resolution: [1080, 1920]
+  safe_zones:
+    top_margin_pct: 15
+    bottom_margin_pct: 20
+  credit_method: "on_screen_and_caption"
+  separate_arabic_channel: true
+  source_doc: "https://help.snapchat.com"

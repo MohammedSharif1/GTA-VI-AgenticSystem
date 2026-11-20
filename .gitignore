@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Environment & Keys
+.env
+
+# Media & Render Artifacts
+out/
+data/raw/
+*.mp4
+*.mov
+*.wav
+*.mp3
+
+# Logs & OS
+logs/*.jsonl
+.DS_Store
+Thumbs.db

@@ -1,0 +1,13 @@
+# Hard-blocked categories and rules per Rockstar Policy & Rev 5 specs
+
+hard_blocked_categories:
+  - story_endings_and_major_plot_reveals
+  - edited_compilations_of_cutscenes_or_story_dialogue
+  - isolated_cinematics_without_gameplay
+  - cheats_mods_exploits
+  - in_game_tv_or_comedy_shows_standalone
+  - leaks_unreleased_builds
+
+runtime_constraints:
+  max_excerpt_duration_seconds: 40
+  max_cutscene_percentage: 20

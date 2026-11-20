@@ -1,113 +1,116 @@
-"""Main pipeline runner CLI."""
+"""Pipeline runner CLI.
+
+    python -m src.run check                       # environment + policy facts
+    python -m src.run job jobs/example_job.yaml   # render one job
+    python -m src.run job JOB --dry-run           # gate + plan, no encoding
+
+``python src/run.py`` also works: the bootstrap below puts the repository root
+on ``sys.path`` so the ``src.`` package imports resolve either way.
+"""
 
 import argparse
 import json
+import sys
 from pathlib import Path
-import time
-import yaml
-from dotenv import load_dotenv
 
-from src.gates import validate_job_gates, GateValidationError
-from src.cut import cut_excerpt
-from src.reframe import reframe_9_16
-from src.credit import generate_credit_text, burn_credit_overlay
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-load_dotenv()
-
-
-def log_run(log_data: dict, log_path: str = "logs/runs.jsonl"):
-    """Appends structured log to runs.jsonl."""
-    p = Path(log_path)
-    p.parent.mkdir(parents=True, exist_ok=True)
-    with open(p, "a", encoding="utf-8") as f:
-        f.write(json.dumps(log_data, ensure_ascii=False) + "\n")
+from src.job import JobError, load_job  # noqa: E402
+from src.pipeline import (  # noqa: E402
+    STATUS_BLOCKED,
+    STATUS_SUCCESS,
+    RenderResult,
+    environment_report,
+    render_job,
+)
 
 
-def execute_job(job_file: str):
-    """Executes the v1 pipeline on a single job YAML."""
-    start_time_all = time.time()
-    job_path = Path(job_file)
-    if not job_path.exists():
-        raise FileNotFoundError(f"Job file not found: {job_file}")
-
-    with open(job_path, "r", encoding="utf-8") as f:
-        job = yaml.safe_load(f)
-
-    job_id = job.get("id", job_path.stem)
-    print(f"[*] Processing Job ID: {job_id}")
-
-    # 1. Gate validation
-    print("  -> Checking deterministic gates...")
-    try:
-        passed_gates = validate_job_gates(job)
-        print(f"     [OK] All gates passed: {', '.join(passed_gates)}")
-    except GateValidationError as e:
-        print(f"     [FAIL] Gate validation blocked job: {e}")
-        log_run({
-            "job_id": job_id,
-            "status": "BLOCKED",
-            "error": str(e),
-            "timestamp": time.time()
-        })
-        return False
-
-    source_file = job.get("source_file")
-    if not source_file or not Path(source_file).exists():
-        print(f"     [INFO] Source file '{source_file}' not found locally.")
-        print("     Place raw footage at specified path to complete render.")
-        log_run({
-            "job_id": job_id,
-            "status": "AWAITING_SOURCE_FILE",
-            "source_path": source_file,
-            "timestamp": time.time()
-        })
-        return True
-
-    # 2. Excerpt Cut
-    out_dir = Path("out") / job_id
-    out_dir.mkdir(parents=True, exist_ok=True)
-    cut_file = out_dir / "cut.mp4"
-    print(f"  -> Cutting excerpt ({job['start_time']}s - {job['end_time']}s)...")
-    cut_excerpt(source_file, str(cut_file), float(job["start_time"]), float(job["end_time"]))
-
-    # 3. Reframe 9:16
-    reframe_file = out_dir / "reframe_9_16.mp4"
-    print("  -> Reframing to 1080x1920 (9:16)...")
-    reframe_9_16(str(cut_file), str(reframe_file))
-
-    # 4. Credit Overlay
-    final_en = out_dir / f"{job_id}_final_en.mp4"
-    credit_text = generate_credit_text(job["creator_name"])
-    print(f"  -> Adding on-screen credit: '{credit_text}'...")
-    burn_credit_overlay(str(reframe_file), str(final_en), credit_text)
-
-    duration_total = time.time() - start_time_all
-    print(f"[*] Render complete in {duration_total:.2f}s -> {final_en}")
-
-    log_run({
-        "job_id": job_id,
-        "status": "SUCCESS",
-        "output_file": str(final_en),
-        "execution_seconds": duration_total,
-        "cost_usd": 0.0,
-        "timestamp": time.time()
-    })
-    return True
+def _print_environment() -> int:
+    report = environment_report()
+    print("The Find Feed — environment")
+    print("=" * 60)
+    for tool, version in report["ffmpeg"].items():
+        print(f"  {tool:<8} {version}")
+    limits = report["limits"]
+    if "error" in limits:
+        print(f"  policy    ERROR: {limits['error']}")
+        return 1
+    print(f"  excerpt   max {limits['max_excerpt_seconds']:.0f}s (R2)")
+    print(f"  cutscene  max {limits['max_cutscene_ratio']:.0%} of excerpt (R9)")
+    print(
+        f"  tightest  {limits['tightest_platform']} "
+        f"({limits['tightest_max_duration']:.0f}s)"
+    )
+    print(f"  platforms {', '.join(report['platforms'])}")
+    print()
+    print("  Publish clearance is never granted by this toolchain.")
+    return 0
 
 
-def main():
-    parser = argparse.ArgumentParser(description="The Find Feed Pipeline Runner")
-    subparsers = parser.add_subparsers(dest="command")
-
-    job_parser = subparsers.add_parser("job", help="Run a specific job YAML")
-    job_parser.add_argument("job_file", help="Path to job YAML file")
-
-    args = parser.parse_args()
-    if args.command == "job":
-        execute_job(args.job_file)
+def _print_result(result: RenderResult, as_json: bool) -> int:
+    if as_json:
+        print(json.dumps(result.to_log(), ensure_ascii=False, indent=2))
     else:
-        parser.print_help()
+        print()
+        print("=" * 70)
+        print(f"  Job {result.job_id} — {result.status}")
+        print("=" * 70)
+        for stage in result.stages:
+            print(f"  [{stage.status:<8}] {stage.name}: {stage.detail}")
+        for warning in result.warnings:
+            print(f"  warning: {warning}")
+        if result.error:
+            print(f"  error: {result.error}")
+        if result.output_path:
+            print(f"  output: {result.output_path}")
+        print(f"  audio muted (R10): {'yes' if result.audio_muted else 'no'}")
+        print("  publish clearance: NO (always requires the operator)")
+        print("=" * 70)
+
+    if result.status == STATUS_SUCCESS:
+        return 0
+    if result.status == STATUS_BLOCKED:
+        return 2
+    return 1
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="The Find Feed pipeline runner",
+        epilog="Rendering is not publishing. This tool never grants clearance.",
+    )
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    subparsers.add_parser("check", help="Report FFmpeg and policy status")
+
+    job_parser = subparsers.add_parser("job", help="Render a job YAML")
+    job_parser.add_argument("job_file", help="Path to a job YAML file")
+    job_parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Run the gates and describe the plan without encoding",
+    )
+    job_parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Emit the structured result as JSON",
+    )
+
+    args = parser.parse_args(argv)
+
+    if args.command == "check":
+        return _print_environment()
+
+    try:
+        job = load_job(args.job_file)
+    except JobError as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        return 1
+
+    result = render_job(job, dry_run=args.dry_run)
+    return _print_result(result, as_json=args.json)
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

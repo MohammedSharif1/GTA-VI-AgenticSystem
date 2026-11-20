@@ -1,21 +1,51 @@
-# Creator DM Templates
+# Creator Outreach Templates
 
-Send via the platform where the clip was sourced within 2 hours of posting.
+These templates are for requesting permission from creators **before** posting.
+The operator has not yet authorized contacting creators or defined the outreach process.
+These templates are drafts for when that decision is made.
 
-## English Template
+> **Note:** Do not send these without the operator's explicit authorization.
+> The outreach method, timing, and contact strategy are undecided.
+
+## English — Permission Request Template
 ```text
-Hey [Creator Name]! Featured your awesome GTA VI moment on The Find Feed today with full on-screen credit and direct links back to your channel. 
+Hey [Creator Name]! I run The Find Feed, a channel that highlights great GTA VI
+moments with full on-screen credit and links back to creators.
 
-You can check it out here: [Link to Short]
+I'd love to feature [brief description of the clip/moment] from your channel.
+Here's what it would look like:
 
-We love showcasing great creator finds. That said, if you'd prefer we not feature your clips, just let us know and we'll take it down right away and make sure not to use your clips in the future. Thanks and keep up the great content!
+- Your channel name displayed on-screen for the full video
+- Direct link to your original video in the description
+- Credit in a pinned comment
+
+Would you be okay with that? If you'd ever want a clip removed, just let me
+know and it comes down immediately.
+
+Thanks for the amazing content!
 ```
 
-## Arabic Template
+## Arabic — Permission Request Template
 ```text
-أهلاً [اسم صانع المحتوى]! قمنا بنشر لقطتك المميزة من لعبة GTA VI اليوم على حساب The Find Feed مع ذكر قناتك ورابطك بشكل كامل في الفيديو والوصف.
+أهلاً [اسم صانع المحتوى]! أنا أدير حساب The Find Feed، وهو حساب متخصص
+في تسليط الضوء على أفضل لحظات GTA VI مع ذكر كامل لأصحاب المقاطع وروابط
+قنواتهم.
 
-يمكنك مشاهدة المقطع هنا: [رابط المقطع]
+أرغب في مشاركة [وصف مختصر للمقطع] من قناتك. إليك كيف سيظهر المقطع:
 
-نحن نسعد بمشاركة أفضل لقطات مجتمع اللاعبين. ومع ذلك، إذا كنت تفضل عدم مشاركة مقاطعك، فقط أخبرنا وسنقوم بحذف المقطع فوراً والتأكد من عدم استخدام لقطاتك مستقبلاً. شكراً لك واستمر في هذا المحتوى الرائع!
+- اسم قناتك يظهر على الشاشة طوال الفيديو
+- رابط مباشر للفيديو الأصلي في الوصف
+- ذكر في تعليق مثبّت
+
+هل توافق على ذلك؟ إذا رغبت في أي وقت بإزالة أي مقطع، فقط أخبرني
+وسيتم حذفه فوراً.
+
+شكراً لك على المحتوى الرائع!
 ```
+
+## Logging
+
+When outreach is authorized:
+- Log every permission request: date sent, platform, creator, clip description.
+- Log every reply: date, response (yes/no/conditions), exact text.
+- Do not publish until a positive reply is recorded.

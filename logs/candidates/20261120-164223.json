@@ -1,0 +1,38 @@
+{
+  "candidate_id": "20261120-164223",
+  "timestamp": "2026-11-20T16:42:23.693677+00:00",
+  "input": {
+    "source_url": "https://youtube.com/watch?v=EXAMPLE",
+    "creator_name": "ViceCityExplorer",
+    "creator_channel_url": "https://youtube.com/@ViceCityExplorer",
+    "topic_summary": "Hidden underwater cave off Vice Beach leads to a submarine bunker",
+    "category": "new_discovery",
+    "sensitivity": "Green",
+    "start_time": 14.5,
+    "end_time": 42.0,
+    "cutscene_seconds": 0.0,
+    "claim_text": "Submarine bunker accessible through Vice Beach underwater cave",
+    "evidence_link": "https://reddit.com/r/GTA6/comments/EXAMPLE",
+    "licensed_music_audible": false,
+    "game_version": "1.00",
+    "language_spoken": "en",
+    "notes": "Creator speaks English. Good visual quality. No radio music."
+  },
+  "status": "accepted",
+  "flags": [
+    "REMINDER: Permission must be secured before public posting. This tool does not check or grant permission."
+  ],
+  "missing_fields": [],
+  "possible_duplicates": [],
+  "publish_clearance": false,
+  "gate_results": {
+    "required_fields": true,
+    "valid_category": true,
+    "sensitivity_ok": true,
+    "duration_ok": true,
+    "cutscene_ratio_ok": true,
+    "claim_evidence_ok": true,
+    "music_ok": true,
+    "not_blocked_creator": true
+  }
+}

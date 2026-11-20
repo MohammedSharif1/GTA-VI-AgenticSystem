@@ -1,56 +1,70 @@
 # The Find Feed — GTA VI Clips System
 
-Automated vertical video pipeline turning verified public GTA VI moments and official Rockstar updates into short-form content for YouTube Shorts, TikTok, Instagram Reels, and Snapchat Spotlight in English and Arabic (Modern Standard Arabic).
+A one-person operation for finding interesting GTA VI moments — discoveries, fast guides, patch changes, funny moments, and other useful finds — and producing short vertical videos for YouTube Shorts, TikTok, Instagram Reels, and Snapchat Spotlight, in English and Arabic.
 
-Based on Plan Revision 5.
+## Current phase: Phase 1 — Intake and Triage
 
-## Project Structure
+The active tool is `src/find_feed.py`. It accepts manually entered candidate metadata, validates fields against deterministic rules, checks for duplicate topics, flags risks, and writes structured logs. It does not download media, contact creators, publish, or grant clearance.
+
+See [PHASE_1_SCOPE.md](PHASE_1_SCOPE.md) for the full scope, confirmed decisions, and acceptance criteria.
+
+## Quick start
+
+```bash
+# Run with the built-in sample candidate
+python src/find_feed.py --example
+
+# Process a candidate from a JSON file
+python src/find_feed.py --input candidate.json
+
+# Enter candidate fields interactively
+python src/find_feed.py --interactive
+```
+
+**Requirements:** Python 3.11+ (standard library only — no paid services or API keys needed for Phase 1).
+
+## Project structure
 
 ```text
 find-feed/
-├── README.md
-├── pyproject.toml
-├── .env.example
+├── README.md                   # This file
+├── PHASE_1_SCOPE.md            # Phase 1 scope, decisions, and acceptance criteria
+├── pyproject.toml              # Python project config
+├── .env.example                # Environment variable template (Phase 2+)
 ├── .gitignore
-├── jobs/                   # YAML job files defining clips to process
-├── out/                    # Rendered vertical videos
-├── logs/
-│   └── runs.jsonl          # Structured execution logs with per-job cost & timing
-├── config/
-│   ├── platform_rules.yaml # Platform specifications & limits
-│   ├── blocked_content.yaml# Rockstar policy & hard-blocked topics
-│   ├── glossary_ar.yaml    # Standardized Arabic terms & transliterations
-│   ├── series_templates.yaml# Series structure & timings (New Find, Fast Guide, What Changed)
-│   └── do_not_post.csv     # Creator opt-out / blacklist with multi-platform handles
 ├── src/
-│   ├── __init__.py
-│   ├── cut.py              # Excerpt cutting via FFmpeg
-│   ├── reframe.py          # 9:16 vertical smart crop and HUD handling
-│   ├── subtitles.py        # Speech-to-text (Whisper API) & subtitle generation
-│   ├── arabic.py           # Arabic translation, glossary lookup & RTL libass formatting
-│   ├── credit.py           # On-screen credit overlay generation
-│   ├── gates.py            # Hard programmatic validation checks (R1-R10)
-│   └── run.py              # Main CLI orchestrator (`python -m src.run job jobs/<file>.yaml`)
+│   ├── find_feed.py            # ← Phase 1 intake/triage tool (active)
+│   ├── cut.py                  # FFmpeg excerpt cutting (Phase 2+)
+│   ├── reframe.py              # 9:16 vertical reframing (Phase 2+)
+│   ├── subtitles.py            # Whisper transcription & SRT (Phase 2+)
+│   ├── arabic.py               # Arabic translation & RTL subtitles (Phase 2+)
+│   ├── credit.py               # Credit overlay generation (Phase 2+)
+│   ├── gates.py                # Pipeline gate validation (Phase 2+)
+│   └── run.py                  # Pipeline runner CLI (Phase 2+)
+├── config/
+│   ├── platform_rules.yaml     # Platform specs & limits
+│   ├── blocked_content.yaml    # Hard-blocked categories
+│   ├── glossary_ar.yaml        # Arabic gaming terms glossary
+│   ├── series_templates.yaml   # Series structure & timings
+│   └── do_not_post.csv         # Creator opt-out list
 ├── docs/
-│   ├── rights_rules.md     # R1-R10 guardrails and rights stance
-│   ├── attribution.md      # Caption and on-screen credit templates
-│   ├── takedown_runbook.md # 24-hour removal workflow
-│   └── dm_templates.md     # English and Arabic outreach notification templates
+│   ├── rights_rules.md         # R1-R10 guardrails
+│   ├── attribution.md          # Credit templates (EN & AR)
+│   ├── takedown_runbook.md     # 24-hour removal workflow
+│   └── dm_templates.md         # Creator outreach templates
+├── jobs/                       # YAML job files (Phase 2+)
+├── logs/
+│   ├── candidates/             # Phase 1 candidate records (JSON)
+│   └── runs.jsonl              # Structured run log
 └── tests/
-    ├── __init__.py
-    └── test_gates.py       # Unit tests for deterministic validation rules
+    └── test_gates.py           # Gate validation tests
 ```
 
-## Quick Start
+## Key rules
 
-1. Install Python 3.11+ and ensure `ffmpeg` with `libass` is installed and in your system PATH.
-2. Install dependencies:
-   ```bash
-   pip install -e .
-   ```
-3. Copy `.env.example` to `.env` and fill in your `OPENAI_API_KEY`.
-4. Create a job YAML file in `jobs/` (see `jobs/example_job.yaml`).
-5. Run the pipeline:
-   ```bash
-   python -m src.run job jobs/example_job.yaml
-   ```
+- **Permission before posting:** Permission must be secured before public posting. Editing may start while permission is pending.
+- **Source excerpt:** Maximum 40 seconds, never a full video.
+- **Cutscene limit:** At most 20% of a short's runtime.
+- **Source audio:** Mute whenever radio or licensed music is audible.
+- **Credit:** On-screen source credit on every short. No ownership claims.
+- **Publish clearance:** Always requires the operator. The tool never authorizes publication.
